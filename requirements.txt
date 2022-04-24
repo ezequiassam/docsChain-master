@@ -1,0 +1,6 @@
+flask==0.12.2
+requests==2.18.4
+flask-sqlalchemy==2.5.1
+flask-login==0.6.0
+PyPDF2==1.27.4
+reportlab==3.6.9

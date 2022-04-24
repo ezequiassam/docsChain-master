@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="column is-6 is-offset-3">
+        <h3 class="title">Carregar Documentos</h3>
+        <div class="box">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="notification is-danger">
+                        {{ messages[0] }}
+                    </div>
+                {% endif %}
+            {% endwith %}
+            <form method="POST" action="/uploader" enctype = "multipart/form-data">
+                <div class="field">
+                    <div class="control">
+                        <p class="has-text-centered is-size-4">Submeta aqui seus documentos</p>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <div class="control">
+                        <input class="input is-medium" type="file" name="file" placeholder="Selecione o PDF">
+                    </div>
+                </div>
+                <button class="button is-block is-info is-large is-fullwidth">Upload</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
