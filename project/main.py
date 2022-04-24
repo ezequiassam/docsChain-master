@@ -44,15 +44,17 @@ def uploader_post():
     if file.filename == '':
         flash('Nenhum arquivo selecionado')
         return redirect(url_for('main.uploader'))
-    if file and allowed_file(file.filename):
-        try:
-            pdf_plot = process_new_pdf(file)
-            filename = secure_filename(file.filename)
-            return send_file(pdf_plot, attachment_filename=filename)
-        except Exception as ex:
-            print(ex)
-            flash('O documento já existe na base')
-            return redirect(url_for('main.uploader'))
+    if not allowed_file(file.filename):
+        flash('Selecione apenas arquivos tipos .pdf')
+        return redirect(url_for('main.uploader'))
+    try:
+        pdf_plot = process_new_pdf(file)
+        filename = secure_filename(file.filename)
+        return send_file(pdf_plot, attachment_filename=filename)
+    except Exception as ex:
+        print(ex)
+        flash('O documento já existe na base')
+        return redirect(url_for('main.uploader'))
 
 
 @main.route('/update-doc')
@@ -75,13 +77,15 @@ def update_doc_post():
     if file.filename == '':
         flash('Nenhum arquivo selecionado')
         return redirect(url_for('main.update_doc'))
-    if file and allowed_file(file.filename):
-        try:
-            pdf_plot = update_pdf(file, code_hash)
-            return send_file(pdf_plot, attachment_filename=secure_filename(file.filename))
-        except:
-            flash('O documento não foi localizado na base')
-            return redirect(url_for('main.update_doc'))
+    if not allowed_file(file.filename):
+        flash('Selecione apenas arquivos tipos .pdf')
+        return redirect(url_for('main.update_doc'))
+    try:
+        pdf_plot = update_pdf(file, code_hash)
+        return send_file(pdf_plot, attachment_filename=secure_filename(file.filename))
+    except:
+        flash('O documento não foi localizado na base')
+        return redirect(url_for('main.update_doc'))
 
 
 # TODO implementar retorno do arquivo pdf em caso de sucesso
