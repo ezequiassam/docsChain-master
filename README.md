@@ -11,7 +11,7 @@ $ pip install -r requirements.txt
 ``` 
 3. Exportar enviroment
 ```
-$ export FLASK_APP=projects
+$ export FLASK_APP=project
 ``` 
 4. Executar servidor
  ```
