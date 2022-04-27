@@ -11,6 +11,7 @@ from sqlalchemy import or_
 from werkzeug.utils import secure_filename
 
 from . import db
+from .gdrive import gdrive_upload
 from .models import Documento
 
 HOST_CHAIN = "http://127.0.0.1:5000"
@@ -101,7 +102,7 @@ def process_pdf(file, str_pdf, existing_document=None):
 
     # plotar no pdf
     pdf_plot_stream = plot_pdf(file, sha_hash)
-    pdf_plot_base64 = encode_base64(pdf_plot_stream.read()).decode()
+    pdf_plot_base64 = encode_base64(pdf_plot_stream.getvalue()).decode()
     pdf_plot_stream.seek(0)
 
     previous_validator = None
@@ -109,6 +110,9 @@ def process_pdf(file, str_pdf, existing_document=None):
         previous_validator = existing_document.sha
         existing_document.nextValidator = sha_hash
         db.session.commit()
+
+    # upload para google drive
+    gdrive_link = gdrive_upload(pdf_plot_stream, secure_filename(file.filename), sha_hash)
 
     # salvar e retornar pdf plotado
     save_pdf(file, pdf_plot_base64, previous_hash, sha_hash, str_pdf, previous_validator)
