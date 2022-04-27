@@ -234,3 +234,37 @@ class Blockchain:
         guess = f'{last_proof}{proof}{last_hash}'.encode()
         guess_hash = hashlib.sha256(guess).hexdigest()
         return guess_hash[:4] == "0000"
+
+
+class CustomError(Exception):
+    def __init__(self, message, **errors):
+        self.message = message
+        self.errors = errors
+
+    def __str__(self):
+        return self.message
+
+
+class DocumentExistError(CustomError):
+    def __init__(self):
+        super().__init__('O documento já existe na base')
+
+
+class DocumentNotFoundError(CustomError):
+    def __init__(self):
+        super().__init__('O documento não foi localizado na base')
+
+
+class GDriveUploadError(CustomError):
+    def __init__(self):
+        super().__init__('Ocorreu um erro ao tentar salvar o documento no Google Drive')
+
+
+class GDriveBackupError(CustomError):
+    def __init__(self):
+        super().__init__('Ocorreu um erro ao fazer o backup no Google Drive')
+
+
+class RequestBlockchainError(CustomError):
+    def __init__(self):
+        super().__init__('Ocorreu um erro ao recuperar os valores da blockchain')
