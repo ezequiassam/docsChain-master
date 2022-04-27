@@ -87,7 +87,6 @@ def update_doc_post():
         return redirect(url_for('main.update_doc'))
 
 
-# TODO implementar retorno do arquivo pdf em caso de sucesso
 @main.route('/valid', methods=['POST'])
 @login_required
 def valid_code():
