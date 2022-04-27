@@ -20,6 +20,7 @@ class Documento(db.Model):
     :param sha: código de validação(plotado no pdf)
     :param nextValidator: código de validação do pdf anterior
     :param previousValidator: código de validação do pdf atualizado
+    :param alternateLinkGDrive: Link do documento salvo no Google Drive
     :param created: data de criação do documento
 
     """
@@ -32,6 +33,7 @@ class Documento(db.Model):
     sha = db.Column(db.String)
     nextValidator = db.Column(db.String)
     previousValidator = db.Column(db.String)
+    alternateLinkGDrive = db.Column(db.String)
     created = db.Column(db.DateTime, nullable=False)
 
     def toDict(self):
@@ -43,6 +45,7 @@ class Documento(db.Model):
             'sha': self.sha,
             'nextValidator': self.nextValidator,
             'previousValidator': self.previousValidator,
+            'alternateLinkGDrive': self.alternateLinkGDrive,
             'created': str(self.created)
         }
 

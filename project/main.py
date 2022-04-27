@@ -93,15 +93,16 @@ def update_doc_post():
 def valid_code():
     code_hash = request.form.get('code')
     if not code_hash:
-        flash('Por favor informe o código corretamente')
+        flash('Por favor informe o código corretamente', 'error')
         return redirect(url_for('main.index'))
 
     existing_document = valid_code_hash(code_hash)
     if not existing_document:
-        flash('Não foi encontrado documento para esse código')
+        flash('Não foi encontrado documento para esse código', 'error')
         return redirect(url_for('main.index'))
 
     flash('Documento validado com sucesso!')
+    flash(existing_document.alternateLinkGDrive)
     return redirect(url_for('main.index'))
 
 

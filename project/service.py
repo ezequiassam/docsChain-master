@@ -78,7 +78,7 @@ def plot_pdf(file, codText):
     return output_stream
 
 
-def save_pdf(file, pdf_plot_base64, previous_hash, sha_hash, str_pdf, previous_validator):
+def save_pdf(file, pdf_plot_base64, previous_hash, sha_hash, str_pdf, previous_validator, gdrive_link):
     new_document = Documento(
         filename=secure_filename(file.filename),
         base64orig=str_pdf,
@@ -86,6 +86,7 @@ def save_pdf(file, pdf_plot_base64, previous_hash, sha_hash, str_pdf, previous_v
         chain=previous_hash,
         sha=sha_hash,
         previousValidator=previous_validator,
+        alternateLinkGDrive=gdrive_link,
         created=dt.now()
     )
     db.session.add(new_document)
@@ -119,7 +120,7 @@ def process_pdf(file, str_pdf, existing_document=None):
     gdrive_link = gdrive_upload(pdf_plot_stream, secure_filename(file.filename), sha_hash)
 
     # salvar e retornar pdf plotado
-    save_pdf(file, pdf_plot_base64, previous_hash, sha_hash, str_pdf, previous_validator)
+    save_pdf(file, pdf_plot_base64, previous_hash, sha_hash, str_pdf, previous_validator, gdrive_link)
     return pdf_plot_stream
 
 
