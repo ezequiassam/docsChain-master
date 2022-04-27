@@ -5,7 +5,7 @@ from flask import request, flash, send_file, render_template
 from flask_login import current_user, login_required
 from werkzeug.utils import secure_filename, redirect
 
-from .models import Documento
+from .models import Documento, CustomError
 from .service import process_new_pdf, valid_code_hash, update_pdf
 
 ALLOWED_EXTENSION = {'pdf'}
@@ -52,8 +52,7 @@ def uploader_post():
         filename = secure_filename(file.filename)
         return send_file(pdf_plot, attachment_filename=filename)
     except Exception as ex:
-        print(ex)
-        flash('O documento já existe na base')
+        valid_message_exception(ex)
         return redirect(url_for('main.uploader'))
 
 
@@ -83,8 +82,8 @@ def update_doc_post():
     try:
         pdf_plot = update_pdf(file, code_hash)
         return send_file(pdf_plot, attachment_filename=secure_filename(file.filename))
-    except:
-        flash('O documento não foi localizado na base')
+    except Exception as e:
+        valid_message_exception(e)
         return redirect(url_for('main.update_doc'))
 
 
@@ -113,3 +112,11 @@ def get_all():
     l = [d.toDict() for d in docs]
     j = json.dumps(l)
     return j
+
+
+def valid_message_exception(error):
+    if isinstance(CustomError, error):
+        flash(str(error))
+    else:
+        print(error)
+        flash('Não foi possivel processar a operação')

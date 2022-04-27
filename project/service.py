@@ -12,7 +12,7 @@ from werkzeug.utils import secure_filename
 
 from . import db
 from .gdrive import gdrive_upload
-from .models import Documento
+from .models import Documento, RequestBlockchainError, DocumentExistError, DocumentNotFoundError
 
 HOST_CHAIN = "http://127.0.0.1:5000"
 
@@ -94,8 +94,12 @@ def save_pdf(file, pdf_plot_base64, previous_hash, sha_hash, str_pdf, previous_v
 
 def process_pdf(file, str_pdf, existing_document=None):
     # gerando novo bloco e capturando hash
-    response = requests.get(f"{HOST_CHAIN}/mine").json()
-    previous_hash = response.get('previous_hash')
+    try:
+        response = requests.get(f"{HOST_CHAIN}/mine").json()
+        previous_hash = response.get('previous_hash')
+    except Exception as e:
+        print(e)
+        raise RequestBlockchainError()
 
     # gerando composição do bloco e base64
     sha_hash = generate_hash_sha224(str_pdf, previous_hash)
@@ -127,7 +131,7 @@ def process_new_pdf(file):
         or_(Documento.base64orig == str_pdf, Documento.base64plot == str_pdf)
     ).first()
     if existing_document:
-        raise Exception('Documento já existe')
+        raise DocumentExistError()
 
     return process_pdf(file, str_pdf)
 
@@ -136,7 +140,7 @@ def update_pdf(file, code_hash):
     str_pdf = encode_base64(file.stream.read()).decode()
     existing_document = valid_code_hash(code_hash)
     if not existing_document:
-        raise Exception('Documento não encontrado')
+        raise DocumentNotFoundError()
 
     return process_pdf(file, str_pdf, existing_document)
 
