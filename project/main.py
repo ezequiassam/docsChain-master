@@ -115,7 +115,7 @@ def get_all():
 
 
 def valid_message_exception(error):
-    if isinstance(CustomError, error):
+    if isinstance(error, CustomError):
         flash(str(error))
     else:
         print(error)

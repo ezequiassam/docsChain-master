@@ -1,17 +1,27 @@
 import os
 
-from pydrive.auth import GoogleAuth
-from pydrive.drive import GoogleDrive
-
 from .models import GDriveUploadError
 
 GDRIVE_FOLDER_ID = '1REtUC7xUWNxmiEYQz9REO7_MM3OPhdiq'
 ENCODING = 'LATIN1'
 THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
+
+
 # Login to Google Drive and create drive object
-g_login = GoogleAuth()
-g_login.LocalWebserverAuth()
-drive = GoogleDrive(g_login)
+def connect_google_drive_api():
+    # use Gdrive API to access Google Drive
+    from pydrive2.auth import GoogleAuth
+    from pydrive2.drive import GoogleDrive
+
+    gauth = GoogleAuth()
+    gauth.LocalWebserverAuth()  # client_secrets.json need to be in the same directory as the script
+
+    drive = GoogleDrive(gauth)
+
+    return drive
+
+
+drive = connect_google_drive_api()
 
 
 def gdrive_upload(file_stream, filename, str_validator_hash):
@@ -33,4 +43,4 @@ def gdrive_upload(file_stream, filename, str_validator_hash):
         return file_drive['alternateLink']
     except Exception as e:
         print(e)
-        GDriveUploadError()
+        raise GDriveUploadError()
