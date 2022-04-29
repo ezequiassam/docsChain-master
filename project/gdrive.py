@@ -14,8 +14,8 @@ THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
 # Login to Google Drive and create drive object
 def connect_google_drive_api():
     # use Gdrive API to access Google Drive
-    from pydrive2.auth import GoogleAuth
-    from pydrive2.drive import GoogleDrive
+    from pydrive.auth import GoogleAuth
+    from pydrive.drive import GoogleDrive
 
     gauth = GoogleAuth()
     # gauth.LoadClientConfigFile(client_config_file=os.path.join(THIS_FOLDER, 'client_secrets.json'))

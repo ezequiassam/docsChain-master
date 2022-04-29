@@ -1,3 +1,4 @@
+import io
 import json
 
 from flask import Blueprint, url_for
@@ -6,7 +7,7 @@ from flask_login import current_user, login_required
 from werkzeug.utils import secure_filename, redirect
 
 from .models import Documento, CustomError
-from .service import process_new_pdf, valid_code_hash, update_pdf
+from .service import process_new_pdf, valid_code_hash, update_pdf, decode_base64
 
 ALLOWED_EXTENSION = {'pdf'}
 main = Blueprint('main', __name__)
@@ -112,6 +113,20 @@ def get_all():
     l = [d.toDict() for d in docs]
     j = json.dumps(l)
     return j
+
+
+@main.route('/getdoc', methods=['GET'])
+@login_required
+def get_pdf():
+    args = request.args
+    doc = Documento.query.filter(Documento.sha == args.get('key')).first()
+    if not doc:
+        flash('Não foi encontrado documento', 'error')
+        return redirect(url_for('main.index'))
+    stream = io.BytesIO()
+    stream.write(decode_base64(doc.base64plot))
+    stream.seek(0)
+    return send_file(stream, attachment_filename=secure_filename(doc.filename))
 
 
 def valid_message_exception(error):
