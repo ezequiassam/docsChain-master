@@ -12,13 +12,35 @@ THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
 
 
 # Login to Google Drive and create drive object
+def init_connection():
+    import json
+
+    credentials_data = os.environ.get('GOOGLE_SERVICE_ACCOUNT_CREDENTIALS')
+    if not credentials_data:
+        raise KeyError('No credentials data, missing environment variable')
+
+    credentials_data = json.loads(credentials_data)
+    # Fix the 'private_key' escaping
+    credentials_data['private_key'] = credentials_data.get('private_key').encode().decode('unicode-escape')
+
+    from oauth2client.service_account import ServiceAccountCredentials
+    scope = ['https://www.googleapis.com/auth/drive']
+
+    credentials = ServiceAccountCredentials.from_json_keyfile_dict(credentials_data, scope)
+
+    return credentials
+
+
 def connect_google_drive_api():
     # use Gdrive API to access Google Drive
     from pydrive2.auth import GoogleAuth
     from pydrive2.drive import GoogleDrive
 
+    creds = init_connection()
     gauth = GoogleAuth()
-    gauth.LocalWebserverAuth()  # client_secrets.json need to be in the same directory as the script
+    gauth.credentials = creds
+    gauth.auth_method = 'service'
+    gauth.ServiceAuth()  # client_secrets.json need to be in the same directory as the script
 
     drive = GoogleDrive(gauth)
 
