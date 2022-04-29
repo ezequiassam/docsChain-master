@@ -1,6 +1,8 @@
-flask==0.12.2
+flask==1.0.4
 requests==2.18.4
 flask-sqlalchemy==2.5.1
 flask-login==0.6.0
 PyPDF2==1.27.4
 reportlab==3.6.9
+PyDrive2==1.10.1
+APScheduler==3.9.1

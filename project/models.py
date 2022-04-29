@@ -20,6 +20,7 @@ class Documento(db.Model):
     :param sha: código de validação(plotado no pdf)
     :param nextValidator: código de validação do pdf anterior
     :param previousValidator: código de validação do pdf atualizado
+    :param alternateLinkGDrive: Link do documento salvo no Google Drive
     :param created: data de criação do documento
 
     """
@@ -32,6 +33,7 @@ class Documento(db.Model):
     sha = db.Column(db.String)
     nextValidator = db.Column(db.String)
     previousValidator = db.Column(db.String)
+    alternateLinkGDrive = db.Column(db.String)
     created = db.Column(db.DateTime, nullable=False)
 
     def toDict(self):
@@ -43,6 +45,7 @@ class Documento(db.Model):
             'sha': self.sha,
             'nextValidator': self.nextValidator,
             'previousValidator': self.previousValidator,
+            'alternateLinkGDrive': self.alternateLinkGDrive,
             'created': str(self.created)
         }
 
@@ -234,3 +237,37 @@ class Blockchain:
         guess = f'{last_proof}{proof}{last_hash}'.encode()
         guess_hash = hashlib.sha256(guess).hexdigest()
         return guess_hash[:4] == "0000"
+
+
+class CustomError(Exception):
+    def __init__(self, message, **errors):
+        self.message = message
+        self.errors = errors
+
+    def __str__(self):
+        return self.message
+
+
+class DocumentExistError(CustomError):
+    def __init__(self):
+        super().__init__('O documento já existe na base')
+
+
+class DocumentNotFoundError(CustomError):
+    def __init__(self):
+        super().__init__('O documento não foi localizado na base')
+
+
+class GDriveUploadError(CustomError):
+    def __init__(self):
+        super().__init__('Ocorreu um erro ao tentar salvar o documento no Google Drive')
+
+
+class GDriveBackupError(CustomError):
+    def __init__(self):
+        super().__init__('Ocorreu um erro ao fazer o backup no Google Drive')
+
+
+class RequestBlockchainError(CustomError):
+    def __init__(self):
+        super().__init__('Ocorreu um erro ao recuperar os valores da blockchain')

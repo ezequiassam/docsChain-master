@@ -10,7 +10,8 @@ def create_app():
     app = Flask(__name__)
 
     app.config['SECRET_KEY'] = 'admin'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///documento.db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///dockchain.db'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     db.init_app(app)
 
@@ -31,6 +32,9 @@ def create_app():
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'
     login_manager.init_app(app)
+
+    from .schedule import scheduler_run
+    scheduler_run()
 
     from .models import User
 
