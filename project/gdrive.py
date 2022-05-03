@@ -19,7 +19,7 @@ def connect_google_drive_api():
 
     gauth = GoogleAuth()
     # gauth.LoadClientConfigFile(client_config_file=os.path.join(THIS_FOLDER, 'client_secrets.json'))
-    gauth.CommandLineAuth()  # client_secrets.json need to be in the same directory as the script
+    gauth.LocalWebserverAuth()  # client_secrets.json need to be in the same directory as the script
 
     drive = GoogleDrive(gauth)
 

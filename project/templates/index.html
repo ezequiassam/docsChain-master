@@ -12,11 +12,20 @@
         <div class="column is-4 is-offset-4">
             <h4 class="subtitle">Valide aqui seu código de autenticação:</h4>
             <div class="box">
-                {% with messages = get_flashed_messages(category_filter='message') %}
+                {% with messages = get_flashed_messages(category_filter='message_success') %}
                     {% if messages %}
                         <div class="notification is-success">
                             {{ messages[0] }}
                             <p>Você pode acessa-lo <a href="{{ messages[1] }}" target="_blank">aqui.</a></p>
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                {% with messages = get_flashed_messages(category_filter='message_nextdoc') %}
+                    {% if messages %}
+                        <div class="notification is-success">
+                            {{ messages[0] }}
+                            <p>Você pode acessa-lo <a href="{{ messages[1] }}" target="_blank">aqui.</a></p>
+                            <p>Existe uma nova versão para este documento, para abrir-lo <a href="{{ messages[2] }}" target="_blank">clique aqui.</a></p>
                         </div>
                     {% endif %}
                 {% endwith %}

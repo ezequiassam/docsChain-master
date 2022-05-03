@@ -66,11 +66,11 @@ def update_doc():
 @main.route('/update-doc', methods=['POST'])
 @login_required
 def update_doc_post():
-    file = request.form.get('file')
     code_hash = request.form.get('code')
-    if not file:
+    if 'file' not in request.files:
         flash('Não foi encontrado o arquivo')
         return redirect(url_for('main.update_doc'))
+    file = request.files['file']
     if not code_hash:
         flash('Informe corretamente o código de validação')
         return redirect(url_for('main.update_doc'))
@@ -101,8 +101,15 @@ def valid_code():
         flash('Não foi encontrado documento para esse código', 'error')
         return redirect(url_for('main.index'))
 
-    flash('Documento validado com sucesso!')
-    flash(existing_document.alternateLinkGDrive)
+    status_message = 'message_success'
+    messages = ['Documento validado com sucesso!', existing_document.alternateLinkGDrive]
+    if existing_document.nextValidator:
+        doc_next = valid_code_hash(existing_document.nextValidator)
+        if doc_next:
+            status_message = 'message_nextdoc'
+            messages.append(doc_next.alternateLinkGDrive)
+    for m in messages:
+        flash(m, status_message)
     return redirect(url_for('main.index'))
 
 
